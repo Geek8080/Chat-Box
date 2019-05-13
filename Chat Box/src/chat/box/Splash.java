@@ -5,6 +5,10 @@
  */
 package chat.box;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Prashant Prakash
@@ -39,6 +43,7 @@ public class Splash extends javax.swing.JFrame {
         IP = new javax.swing.JTextField();
         name = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
@@ -84,27 +89,36 @@ public class Splash extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setText("Start the server instead");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addGap(27, 27, 27)
+                        .addComponent(IP, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButton1)
+                            .addComponent(jLabel2))
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(27, 27, 27)
-                                .addComponent(IP, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(jLabel2)
                                 .addGap(28, 28, 28)
-                                .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(160, 160, 160)
-                        .addComponent(jButton1)))
+                                .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton2)))))
                 .addContainerGap(78, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -123,7 +137,9 @@ public class Splash extends javax.swing.JFrame {
                         .addComponent(jLabel2))
                     .addComponent(name, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
                 .addGap(26, 26, 26))
         );
 
@@ -135,9 +151,25 @@ public class Splash extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         ip = IP.getText().trim();
         Name = name.getText().trim();
-        this.setVisible(false);
         new ChatClient(Name).setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        try {
+            Thread t = new Thread(new serverThread());
+            t.start();
+            Thread.sleep(500);
+            Name = "Server";
+            IPAddress ipa = new IPAddress();
+            ip = ipa.getSystemIPAddress();
+            new ChatClient(Name).setVisible(true);
+            this.setVisible(false);
+        } catch (Exception ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Couldn't start the server... ");
+        }
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -173,10 +205,22 @@ public class Splash extends javax.swing.JFrame {
             }
         });
     }
+    
+    class serverThread implements Runnable{
+        public void run(){
+            try{
+                new ChatServer().go();
+                javax.swing.JOptionPane.showMessageDialog(null, "The server has been started... ");
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField IP;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

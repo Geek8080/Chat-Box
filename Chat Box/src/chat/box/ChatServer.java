@@ -27,6 +27,7 @@ public class ChatServer {
         
         try{
             ServerSocket serverSock= new ServerSocket(5000);
+            IPAddress ips = new IPAddress();
             while(true){
                 Socket clientSocket = serverSock.accept();
                 PrintWriter writer = new PrintWriter(clientSocket.getOutputStream());
